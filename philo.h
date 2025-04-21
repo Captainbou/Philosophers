@@ -9,17 +9,17 @@
 
 typedef struct s_pdata
 {
-    int is_full;
+    int is_all_full;
     int is_dead;
-    int number_of_philos;
+    int noph;
     int number_of_times_to_eat;
     long start_time;
     int time_to_die;
     int time_to_eat;
     int time_to_sleep;
-    pthread_mutex_t *death_mutex;
-    pthread_mutex_t *print_mutex;
-    pthread_mutex_t *is_full_mutex;
+    pthread_mutex_t death_mutex;
+    pthread_mutex_t print_mutex;
+    pthread_mutex_t is_full_mutex;
     pthread_mutex_t *forks;
 } t_pdata;
 
@@ -46,5 +46,8 @@ typedef struct s_collect
 	struct s_collect	*next;
 }						t_collect;
 
-int	ft_atoi(const char *str,int *err);
+int	ft_atol(const char *str,int *err);
 void	*ft_malloc(size_t size, int flag);
+t_collect	*add_back(t_collect *current, t_collect *new);
+t_collect	*new_node(void *ptr);
+int	ft_strncmp(const char *s1, const char *s2, int n);

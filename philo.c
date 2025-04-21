@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:58:41 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/20 17:49:03 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:02:47 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,38 @@ long get_time()
     struct timeval tv;
     if (gettimeofday(&tv, NULL))
         ;
-    return ((tv.tv_sec * 1000 + tv.tv_usec * 0.001));
+    return ((tv.tv_sec * 1000 + tv.tv_usec / 1000));
+}
+int check_death(t_pdata *data)
+{
+    pthread_mutex_lock(&data->death_mutex);
+    if(data->is_dead)
+    {
+        pthread_mutex_unlock(&data->death_mutex);
+        return(1);
+    }
+    pthread_mutex_unlock(&data->death_mutex);
+    return(0);
 }
 void print_message(t_philo *philos, char *message)
 {
-    pthread_mutex_lock(philos->pdata->print_mutex);
-    printf("%ld %d %s\n", get_time() - philos->pdata->start_time, philos->id, message);
-    pthread_mutex_unlock(philos->pdata->print_mutex);
+    static int j = 0;
+    if(!check_death(philos->pdata))
+    {
+        
+        pthread_mutex_lock(&philos->pdata->print_mutex);
+        if(j)
+        {
+            pthread_mutex_unlock(&philos->pdata->print_mutex);
+            return;
+        }
+        if(!ft_strncmp(message, "died", 4))
+            j = 1;
+        printf("%ld %d %s\n", get_time() - philos->pdata->start_time, philos->id, message);
+        pthread_mutex_unlock(&philos->pdata->print_mutex);
+    }
 }
 
-int check_death(t_pdata *data)
-{
-    pthread_mutex_lock(data->death_mutex);
-    if(data->is_dead)
-    {
-        pthread_mutex_unlock(data->death_mutex);
-        return(1);
-    }
-    pthread_mutex_unlock(data->death_mutex);
-    return(0);
-}
 int is_counted(int i)
 {
     static int counted[200];
@@ -51,36 +63,40 @@ void monitor(t_philo *philos)
     long time;
     int i;
     int j;
+    int z = 0;
 
     j = 0;
     while (1)
     {
         i = 0;
-        while (i < philos->pdata->number_of_philos)
+        while (i < philos->pdata->noph)
         {
             pthread_mutex_lock(philos[i].meal_mutex);
-            if ( philos[i].is_full == 1 && !is_counted(i) )
+            if ( philos[i].is_full == 1 && !is_counted(i))
                 j++;
-            if (j == philos->pdata->number_of_philos)
+            if (j == philos->pdata->noph)
             {
-                pthread_mutex_lock(philos[i].pdata->is_full_mutex);
-                philos->pdata->is_full = 1;
-                pthread_mutex_unlock(philos[i].pdata->is_full_mutex);
+                pthread_mutex_lock(&philos[i].pdata->is_full_mutex);
+                philos->pdata->is_all_full = 1;
+                pthread_mutex_unlock(philos[i].meal_mutex);
+                pthread_mutex_unlock(&philos[i].pdata->is_full_mutex);
                 return;
             }
             if (get_time() - philos[i].last_meal_time > philos->pdata->time_to_die)
             {   
                 pthread_mutex_unlock(philos[i].meal_mutex);
-                pthread_mutex_lock(philos[i].pdata->death_mutex);
-                philos[i].pdata->is_dead = 1;
                 print_message(&philos[i], "died");
-                pthread_mutex_unlock(philos[i].pdata->death_mutex);
+                pthread_mutex_lock(&philos[i].pdata->death_mutex);
+                philos[i].pdata->is_dead = 1;
+                pthread_mutex_unlock(&philos[i].pdata->death_mutex);
+                pthread_mutex_lock(&philos->pdata->print_mutex);
+                pthread_mutex_unlock(&philos->pdata->print_mutex);
                 return;
             }
             pthread_mutex_unlock(philos[i].meal_mutex);
             i++;
         }
-        usleep(1000);
+        usleep(500);
     }
 }
 
@@ -105,14 +121,14 @@ void *philo(void *param)
 
     if (philos->id % 2 == 0)
     {
-        usleep(1000);
+        usleep(500);
     }
     while (1)
     {
-        pthread_mutex_lock(philos->pdata->is_full_mutex);
-        if(philos->pdata->is_full == 1)
-            return (pthread_mutex_unlock(philos->pdata->is_full_mutex),NULL);
-        pthread_mutex_unlock(philos->pdata->is_full_mutex);
+        pthread_mutex_lock(&philos->pdata->is_full_mutex);
+        if(philos->pdata->is_all_full == 1)
+            return (pthread_mutex_unlock(&philos->pdata->is_full_mutex),NULL);
+        pthread_mutex_unlock(&philos->pdata->is_full_mutex);
         if(check_death(philos->pdata))
             return(NULL);
         pthread_mutex_lock((philos->right_fork));
@@ -144,56 +160,62 @@ int main(int c, char **v)
     t_pdata *pdata;
     t_philo *philos;
     struct timeval tv;
+    int i;
+    int err;
+    
     pdata = ft_malloc(sizeof(t_pdata),GB);
     if(!pdata)
     {
         write(2, "Error: Memory allocation failed\n", 32);
         return (1);
     }
-    int i;
-    int err;
-
     i = 0;
     if (c != 5 && c != 6)
     {
-        printf("Error: Invalid number of arguments\n");
+        write(2,"Error: Invalid number of arguments\n",36);
         return (1);
     }
-    pdata->number_of_philos = ft_atoi(v[1],&err);
-    philos = ft_malloc(sizeof(t_philo) * pdata->number_of_philos,GB);
+    pdata->noph = ft_atol(v[1],&err);
+    if (pdata->noph <= 0 || err)
+    {
+        write(2, "Error: Invalid number of philosophers\n", 39);
+        ft_malloc(0,GB_CLEAR);
+        return (1);
+    }
+    philos = ft_malloc(sizeof(t_philo) * pdata->noph,GB);
     if(!philos)
     {
         write(2, "Error: Memory allocation failed\n", 32);
         ft_malloc(0,GB_CLEAR);
         return (1);
     }
-    pdata->forks = ft_malloc(sizeof(pthread_mutex_t) * pdata->number_of_philos,GB);
+    pdata->forks = ft_malloc(sizeof(pthread_mutex_t) * pdata->noph,GB);
     if(!pdata->forks)
     {
         write(2, "Error: Memory allocation failed\n", 32);
         ft_malloc(0,GB_CLEAR);
         return (1);
     }
-    while(i < pdata->number_of_philos)
+    while(i < pdata->noph)
     {
         pthread_mutex_init((&pdata->forks[i]), NULL);
         i++;
     }
-    pdata->time_to_die = ft_atoi(v[2],&err);
+    pdata->time_to_die = ft_atol(v[2],&err);
     if (pdata->time_to_die <= 0 || err)
     {
         write(2, "Error: Invalid time to die\n", 28);
         ft_malloc(0,GB_CLEAR);
         return (1);
     }
-    pdata->time_to_eat = ft_atoi(v[3],&err);
+    pdata->time_to_eat = ft_atol(v[3],&err);
     if (pdata->time_to_eat <= 0 || err)
     {
         write(2, "Error: Invalid time to eat\n", 28);
         ft_malloc(0,GB_CLEAR);
         return (1);
     }
-    pdata->time_to_sleep = ft_atoi(v[4],&err);
+    pdata->time_to_sleep = ft_atol(v[4],&err);
     if (pdata->time_to_sleep <= 0 || err)
     {
         write(2, "Error: Invalid time to sleep\n", 30);
@@ -202,35 +224,14 @@ int main(int c, char **v)
     }
     pdata->start_time = get_time();
     pdata->is_dead = 0;
-    pdata->is_full = 0;
-    pdata->print_mutex = ft_malloc(sizeof(pthread_mutex_t),GB);
-    if(!pdata->print_mutex)
-    {
-        write(2, "Error: Memory allocation failed\n", 32);
-        ft_malloc(0,GB_CLEAR);
-        return (1);
-    }
-    pdata->is_full_mutex = ft_malloc(sizeof(pthread_mutex_t),GB);
-    if(!pdata->is_full_mutex)
-    {
-        write(2, "Error: Memory allocation failed\n", 32);
-        ft_malloc(0,GB_CLEAR);
-        return (1);
-    }
-    pdata->death_mutex = ft_malloc(sizeof(pthread_mutex_t),GB);
-    if(!pdata->death_mutex)
-    {
-        write(2, "Error: Memory allocation failed\n", 32);
-        ft_malloc(0,GB_CLEAR);
-        return (1);
-    }
-    pthread_mutex_init((pdata->print_mutex),NULL);
-    pthread_mutex_init((pdata->is_full_mutex),NULL);
-    pthread_mutex_init((pdata->death_mutex),NULL);
+    pdata->is_all_full = 0;
+    pthread_mutex_init(&pdata->print_mutex,NULL);
+    pthread_mutex_init(&pdata->death_mutex,NULL);
+    pthread_mutex_init(&pdata->is_full_mutex,NULL);
 
     if (c == 6)
     {
-        pdata->number_of_times_to_eat = ft_atoi(v[5],&err);
+        pdata->number_of_times_to_eat = ft_atol(v[5],&err);
         if(pdata->number_of_times_to_eat <= 0 || err)
         {
             printf("Error: Invalid number of times to eat\n");
@@ -241,10 +242,10 @@ int main(int c, char **v)
     else
         pdata->number_of_times_to_eat = -1;
     i = 0;
-    while (i < pdata->number_of_philos)
+    while (i < pdata->noph)
     {
         philos[i].right_fork = &pdata->forks[i];
-        philos[i].left_fork = &pdata->forks[(i + 1) % pdata->number_of_philos];
+        philos[i].left_fork = &pdata->forks[(i + 1) % pdata->noph];
         philos[i].id = i + 1;
         philos[i].is_full = 0;
         philos[i].last_meal_time = get_time();
@@ -255,22 +256,23 @@ int main(int c, char **v)
         i++;
     }
     i = 0;
-    while (i < pdata->number_of_philos)
+    while (i < pdata->noph)
     {
-        philos[i].left_fork = philos[(i + 1) % pdata->number_of_philos].right_fork;
+        philos[i].left_fork = philos[(i + 1) % pdata->noph].right_fork;
         i++;
     }
     i = 0;
-    while (i < pdata->number_of_philos)
+    while (i < pdata->noph)
     {
         pthread_create((&philos[i].thread), NULL, philo, &philos[i]);
         i++;
     }
     monitor(philos);
     i = 0;
-    while (i < pdata->number_of_philos)
+    while (i < pdata->noph)
     {
         pthread_join(philos[i].thread, NULL);
         i++;
     }
+    ft_malloc(0,GB_CLEAR);
 }

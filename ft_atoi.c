@@ -43,7 +43,7 @@ int	get_number(char *str, int i, int sign, long *res)
 	return (1);
 }
 
-int	ft_atoi(char *str, int *err)
+long	ft_atol(char *str, int *err)
 {
 	int		sign;
 	int		i;
@@ -59,7 +59,5 @@ int	ft_atoi(char *str, int *err)
 			*err = 1;
 		return (0);
 	}
-	if (res >= 2147483647 || res <= -2147483648)
-		return (-1);
 	return (res * sign);
 }
