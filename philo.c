@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:58:41 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/21 18:02:47 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:16:05 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,20 +71,20 @@ void monitor(t_philo *philos)
         i = 0;
         while (i < philos->pdata->noph)
         {
-            pthread_mutex_lock(philos[i].meal_mutex);
+            pthread_mutex_lock(&philos[i].meal_mutex);
             if ( philos[i].is_full == 1 && !is_counted(i))
                 j++;
             if (j == philos->pdata->noph)
             {
                 pthread_mutex_lock(&philos[i].pdata->is_full_mutex);
                 philos->pdata->is_all_full = 1;
-                pthread_mutex_unlock(philos[i].meal_mutex);
+                pthread_mutex_unlock(&philos[i].meal_mutex);
                 pthread_mutex_unlock(&philos[i].pdata->is_full_mutex);
                 return;
             }
             if (get_time() - philos[i].last_meal_time > philos->pdata->time_to_die)
             {   
-                pthread_mutex_unlock(philos[i].meal_mutex);
+                pthread_mutex_unlock(&philos[i].meal_mutex);
                 print_message(&philos[i], "died");
                 pthread_mutex_lock(&philos[i].pdata->death_mutex);
                 philos[i].pdata->is_dead = 1;
@@ -93,10 +93,10 @@ void monitor(t_philo *philos)
                 pthread_mutex_unlock(&philos->pdata->print_mutex);
                 return;
             }
-            pthread_mutex_unlock(philos[i].meal_mutex);
+            pthread_mutex_unlock(&philos[i].meal_mutex);
             i++;
         }
-        usleep(500);
+        usleep(2000);
     }
 }
 
@@ -105,7 +105,7 @@ void ft_usleep(long time, t_pdata *pdata)
     long start_time;
     start_time = get_time();
     
-    while (get_time() - start_time <= time)
+    while (get_time() - start_time < time)
     {
         if (check_death(pdata))
             return;
@@ -121,7 +121,7 @@ void *philo(void *param)
 
     if (philos->id % 2 == 0)
     {
-        usleep(500);
+        usleep(1000);
     }
     while (1)
     {
@@ -138,12 +138,12 @@ void *philo(void *param)
         else
             return (NULL);
         print_message(philos, "has taken a fork");
-        pthread_mutex_lock(philos->meal_mutex);
+        pthread_mutex_lock(&philos->meal_mutex);
         philos->last_meal_time = get_time();
         philos->number_of_times_eaten++;
         if(philos->number_of_times_eaten == philos->pdata->number_of_times_to_eat)
             philos->is_full = 1;
-        pthread_mutex_unlock(philos->meal_mutex);
+        pthread_mutex_unlock(&philos->meal_mutex);
         print_message(philos, "is eating");
         ft_usleep(pdata->time_to_eat, philos->pdata);
         pthread_mutex_unlock((philos->right_fork));
@@ -249,16 +249,9 @@ int main(int c, char **v)
         philos[i].id = i + 1;
         philos[i].is_full = 0;
         philos[i].last_meal_time = get_time();
-        philos[i].meal_mutex = ft_malloc(sizeof(pthread_mutex_t),GB);
-        pthread_mutex_init(philos[i].meal_mutex, NULL);
+        pthread_mutex_init(&philos[i].meal_mutex, NULL);
         philos[i].number_of_times_eaten = 0;
         philos[i].pdata = pdata;
-        i++;
-    }
-    i = 0;
-    while (i < pdata->noph)
-    {
-        philos[i].left_fork = philos[(i + 1) % pdata->noph].right_fork;
         i++;
     }
     i = 0;

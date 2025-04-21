@@ -29,7 +29,7 @@ typedef struct s_philo
     long  last_meal_time;
     pthread_mutex_t *left_fork;
     pthread_mutex_t *right_fork;
-    pthread_mutex_t *meal_mutex;
+    pthread_mutex_t meal_mutex;
     int is_full;
     pthread_t thread;
     long number_of_times_eaten;
