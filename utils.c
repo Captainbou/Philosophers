@@ -15,3 +15,14 @@ int	ft_strncmp(const char *s1, const char *s2, int n)
 		return (t1[i] - t2[i]);
 	return (0);
 }
+
+int	ft_strlen(const char *s)
+{
+	const char	*current = s;
+
+	if (!s)
+		return (0);
+	while (*current)
+		current++;
+	return (current - s);
+}

@@ -51,3 +51,4 @@ void	*ft_malloc(size_t size, int flag);
 t_collect	*add_back(t_collect *current, t_collect *new);
 t_collect	*new_node(void *ptr);
 int	ft_strncmp(const char *s1, const char *s2, int n);
+int	ft_strlen(const char *s);
