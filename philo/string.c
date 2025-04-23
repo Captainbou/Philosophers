@@ -2,7 +2,7 @@ int	ft_strncmp(const char *s1, const char *s2, int n)
 {
 	unsigned char	*t1;
 	unsigned char	*t2;
-	int			i;
+	int				i;
 
 	i = 0;
 	t1 = (unsigned char *)s1;
@@ -18,7 +18,7 @@ int	ft_strncmp(const char *s1, const char *s2, int n)
 
 int	ft_strlen(const char *s)
 {
-	const char	*current = s;
+	const char *current = s;
 
 	if (!s)
 		return (0);
