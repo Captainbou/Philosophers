@@ -6,16 +6,14 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:21:03 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/23 19:21:47 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:29:16 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/resource.h>
 #include <sys/time.h>
 #include <unistd.h>
 
