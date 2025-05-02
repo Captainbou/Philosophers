@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:21:03 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/26 14:48:14 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 19:21:31 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,12 @@ typedef struct s_pdata
 	int					noph;
 	int					number_of_times_to_eat;
 	long				start_time;
-	int					time_to_die;
-	int					time_to_eat;
-	int					time_to_sleep;
+	long				time_to_die;
+	long				time_to_eat;
+	long				time_to_sleep;
 	sem_t 				*forks;
 	sem_t 				*print_sem;
+	sem_t 				*sem_start;
 	sem_t 				*sem_death;
 }						t_pdata;
 
@@ -39,7 +40,6 @@ typedef struct s_philo
 	int					id;
 	int pid;
 	atomic_long				last_meal_time;
-	atomic_int 			 	is_dead;
 	int 					is_full;
 	pthread_t			thread;
 	long				number_of_times_eaten;
@@ -56,7 +56,7 @@ typedef struct s_collect
 	struct s_collect	*next;
 }						t_collect;
 
-int						ft_atol(const char *str, int *err);
+long					ft_atol(const char *str, int *err);
 void					*ft_malloc(size_t size, int flag);
 t_collect				*add_back(t_collect *current, t_collect *new);
 t_collect				*new_node(void *ptr);
