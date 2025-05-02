@@ -6,13 +6,13 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:43:46 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/25 19:51:33 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 19:14:08 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_usleep(long time, t_pdata *pdata)
+int	ft_usleep(long time, t_pdata *pdata)
 {
 	long	start_time;
 
@@ -20,9 +20,10 @@ void	ft_usleep(long time, t_pdata *pdata)
 	while (get_time() - start_time < time)
 	{
 		if (check_death(pdata))
-			return ;
-		usleep(100);
+			return (1);
+		usleep(500);
 	}
+	return (0);
 }
 
 int	eating(t_philo *philos, t_pdata *pdata)
@@ -34,6 +35,9 @@ int	eating(t_philo *philos, t_pdata *pdata)
 	else
 		return (1);
 	print_message(philos, "has taken a fork");
+	if (check_death(philos->pdata))
+		return (pthread_mutex_unlock((philos->right_fork)),
+		pthread_mutex_unlock((philos->left_fork)),1);
 	pthread_mutex_lock(&philos->meal_mutex);
 	philos->last_meal_time = get_time();
 	philos->number_of_times_eaten++;
@@ -41,10 +45,19 @@ int	eating(t_philo *philos, t_pdata *pdata)
 		philos->is_full = 1;
 	pthread_mutex_unlock(&philos->meal_mutex);
 	print_message(philos, "is eating");
-	ft_usleep(pdata->time_to_eat, philos->pdata);
+	if(ft_usleep(pdata->time_to_eat, philos->pdata))
+		return (pthread_mutex_unlock((philos->right_fork)),
+		pthread_mutex_unlock((philos->left_fork)),1);
 	pthread_mutex_unlock((philos->right_fork));
 	pthread_mutex_unlock((philos->left_fork));
 	return (0);
+}
+
+int started(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->pdata->start);
+	pthread_mutex_unlock(&philo->pdata->start);
+	return(1);
 }
 
 void	*philo(void *param)
@@ -54,18 +67,18 @@ void	*philo(void *param)
 
 	philos = (t_philo *)param;
 	pdata = philos->pdata;
+	while(!started(philos))
+		;
 	if (philos->id % 2 == 0)
-	{
 		usleep(1000);
-	}
 	while (1)
 	{
+		if (check_death(philos->pdata))
+			return (NULL);
 		pthread_mutex_lock(&philos->pdata->is_full_mutex);
 		if (philos->pdata->is_all_full == 1)
 			return (pthread_mutex_unlock(&philos->pdata->is_full_mutex), NULL);
 		pthread_mutex_unlock(&philos->pdata->is_full_mutex);
-		if (check_death(philos->pdata))
-			return (NULL);
 		if (eating(philos, pdata))
 			return (NULL);
 		print_message(philos, "is sleeping");

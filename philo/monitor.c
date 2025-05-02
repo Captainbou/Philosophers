@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:45:20 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/23 17:45:39 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:01:05 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	monitor(t_philo *philos)
 			pthread_mutex_unlock(&philos[i].meal_mutex);
 			i++;
 		}
-		usleep(1000);
+		usleep(500);
 	}
 	return (0);
 }

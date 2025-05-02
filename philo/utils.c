@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:46:50 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/25 18:52:33 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 15:58:55 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	ft_destroy(t_pdata *pdata, char *err_msg)
 	}
 	pthread_mutex_destroy(&pdata->print_mutex);
 	pthread_mutex_destroy(&pdata->death_mutex);
+	pthread_mutex_destroy(&pdata->start);
 	pthread_mutex_destroy(&pdata->is_full_mutex);
 	ft_malloc(0, GB_CLEAR);
 	return (1);
@@ -36,8 +37,7 @@ long	get_time(void)
 {
 	struct timeval	tv;
 
-	if (gettimeofday(&tv, NULL))
-		;
+	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000 + tv.tv_usec / 1000));
 }
 

@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:32:50 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/23 17:33:45 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/04/30 15:03:27 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ int	init_data2(t_philo **philos, t_pdata **pdata)
 	(*pdata)->start_time = get_time();
 	if (pthread_mutex_init(&(*pdata)->print_mutex, NULL) != 0
 		|| pthread_mutex_init(&(*pdata)->death_mutex, NULL) != 0
-		|| pthread_mutex_init(&(*pdata)->is_full_mutex, NULL) != 0)
+		|| pthread_mutex_init(&(*pdata)->is_full_mutex, NULL) != 0
+		|| pthread_mutex_init(&(*pdata)->start, NULL) != 0)
 		return (ft_destroy(*pdata, "Error: Mutex initialization failed\n"));
 	return (0);
 }
