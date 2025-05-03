@@ -65,7 +65,7 @@ void	print_message(t_philo *philos, char *message)
 	}
 	if (!ft_strncmp(message, "died", 4))
 		j = 1;
-	printf("%ld %d %s\n", get_time() - philos->pdata->start_time,
-		philos->id, message);
+	printf("%ld %d %s\n", get_time() - philos->pdata->start_time, philos->id,
+		message);
 	pthread_mutex_unlock(&philos->pdata->print_mutex);
 }

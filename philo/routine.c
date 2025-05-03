@@ -37,7 +37,7 @@ int	eating(t_philo *philos, t_pdata *pdata)
 	print_message(philos, "has taken a fork");
 	if (check_death(philos->pdata))
 		return (pthread_mutex_unlock((philos->right_fork)),
-		pthread_mutex_unlock((philos->left_fork)),1);
+			pthread_mutex_unlock((philos->left_fork)), 1);
 	pthread_mutex_lock(&philos->meal_mutex);
 	philos->last_meal_time = get_time();
 	philos->number_of_times_eaten++;
@@ -45,19 +45,19 @@ int	eating(t_philo *philos, t_pdata *pdata)
 		philos->is_full = 1;
 	pthread_mutex_unlock(&philos->meal_mutex);
 	print_message(philos, "is eating");
-	if(ft_usleep(pdata->time_to_eat, philos->pdata))
+	if (ft_usleep(pdata->time_to_eat, philos->pdata))
 		return (pthread_mutex_unlock((philos->right_fork)),
-		pthread_mutex_unlock((philos->left_fork)),1);
+			pthread_mutex_unlock((philos->left_fork)), 1);
 	pthread_mutex_unlock((philos->right_fork));
 	pthread_mutex_unlock((philos->left_fork));
 	return (0);
 }
 
-int started(t_philo *philo)
+int	started(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->pdata->start);
 	pthread_mutex_unlock(&philo->pdata->start);
-	return(1);
+	return (1);
 }
 
 void	*philo(void *param)
@@ -67,7 +67,7 @@ void	*philo(void *param)
 
 	philos = (t_philo *)param;
 	pdata = philos->pdata;
-	while(!started(philos))
+	while (!started(philos))
 		;
 	if (philos->id % 2 == 0)
 		usleep(1000);

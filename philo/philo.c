@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:58:41 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/30 15:10:05 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:38:12 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,7 @@ int	main(int c, char **v)
 	if (monitor(philos))
 		return (1);
 	i = 0;
-	while (i < pdata->noph)
-	{
+	while (i++ < pdata->noph)
 		pthread_join(philos[i].thread, NULL);
-		i++;
-	}
 	ft_destroy(pdata, NULL);
 }
