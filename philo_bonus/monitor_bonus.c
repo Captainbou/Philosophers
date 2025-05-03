@@ -24,8 +24,9 @@ int	check_end_of_service(t_philo *philos)
 
 void	*monitor(void *param)
 {
-	t_philo *philos = (t_philo *)param;
-	
+	t_philo	*philos;
+
+	philos = (t_philo *)param;
 	while (1)
 	{
 		if (philos->is_full == 1)

@@ -6,13 +6,13 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:43:46 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 19:59:20 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:44:41 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	ft_usleep(long time, t_philo *pdata)
+void	ft_usleep(long time)
 {
 	long	start_time;
 
@@ -21,7 +21,7 @@ void	ft_usleep(long time, t_philo *pdata)
 		usleep(500);
 }
 
-void eating(t_philo *philos, t_pdata *pdata)
+void	eating(t_philo *philos, t_pdata *pdata)
 {
 	sem_wait(philos->pdata->forks);
 	print_message(philos, "has taken a fork");
@@ -32,7 +32,7 @@ void eating(t_philo *philos, t_pdata *pdata)
 	if (philos->number_of_times_eaten == philos->pdata->number_of_times_to_eat)
 		philos->is_full = 1;
 	print_message(philos, "is eating");
-	ft_usleep(pdata->time_to_eat, philos);
+	ft_usleep(pdata->time_to_eat);
 	sem_post(philos->pdata->forks);
 	sem_post(philos->pdata->forks);
 }
@@ -42,7 +42,7 @@ void	*philo(t_philo *philos)
 	t_pdata	*pdata;
 
 	pdata = philos->pdata;
-	if(philos->id % 2 == 0)
+	if (philos->id % 2 == 0)
 		usleep(1000);
 	while (1)
 	{
@@ -50,7 +50,7 @@ void	*philo(t_philo *philos)
 			return (NULL);
 		eating(philos, pdata);
 		print_message(philos, "is sleeping");
-		ft_usleep(pdata->time_to_sleep, philos);
+		ft_usleep(pdata->time_to_sleep);
 		print_message(philos, "is thinking");
 	}
 	return (NULL);

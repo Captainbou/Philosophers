@@ -47,7 +47,6 @@ long	get_time(void)
 
 void	print_message(t_philo *philos, char *message)
 {
-
 	sem_wait(philos->pdata->print_sem);
 	if (!ft_strncmp(message, "died", 4))
 	{
@@ -56,7 +55,7 @@ void	print_message(t_philo *philos, char *message)
 		sem_post(philos->pdata->sem_death);
 		return ;
 	}
-	printf("%ld %d %s\n", get_time() - philos->pdata->start_time,
-			philos->id, message);
+	printf("%ld %d %s\n", get_time() - philos->pdata->start_time, philos->id,
+		message);
 	sem_post(philos->pdata->print_sem);
 }

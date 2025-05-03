@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 23:18:00 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/23 23:18:34 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:34:26 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_strncmp(const char *s1, const char *s2, int n)
 
 int	ft_strlen(const char *s)
 {
-	const char *current = s;
+	const char	*current = s;
 
 	if (!s)
 		return (0);
