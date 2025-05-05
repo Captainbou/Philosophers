@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:32:50 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/04/25 19:38:37 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:58:57 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@ int	init_data2(t_philo **philos, t_pdata **pdata)
 
 	*philos = ft_malloc(sizeof(t_philo) * (*pdata)->noph, GB);
 	if (!*philos)
-		return (ft_destroy(*pdata, "Error: Memory allocation failed\n"));
-	(*pdata)->forks = ft_malloc(sizeof(pthread_mutex_t) * (*pdata)->noph, GB);
-	if (!(*pdata)->forks)
 		return (ft_destroy(*pdata, "Error: Memory allocation failed\n"));
 	i = 0;
 	(*pdata)->start_time = get_time();

@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 23:43:19 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 19:22:54 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/05 15:15:57 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_destroy(t_pdata *pdata, char *err_msg)
 	sem_close(pdata->print_sem);
 	sem_close(pdata->forks);
 	sem_close(pdata->sem_death);
-	sem_close(pdata->sem_start);
+	sem_close(pdata->servant);
 	ft_malloc(0, GB_CLEAR);
 	return (1);
 }
@@ -35,15 +35,6 @@ long	get_time(void)
 		;
 	return ((tv.tv_sec * 1000 + tv.tv_usec / 1000));
 }
-
-// int	check_death(t_philo *data)
-// {
-// 	if (data->is_dead)
-// 	{
-// 		return (1);
-// 	}
-// 	return (0);
-// }
 
 void	print_message(t_philo *philos, char *message)
 {

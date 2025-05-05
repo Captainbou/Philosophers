@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:45:20 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 19:58:07 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:46:52 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	*monitor(void *param)
 			return (NULL);
 		if (check_end_of_service(philos))
 			return (NULL);
-		usleep(100);
+		usleep(500);
 	}
 	return (NULL);
 }

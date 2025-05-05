@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:21:03 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 22:58:50 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:57:41 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ typedef struct s_pdata
 	long				time_to_sleep;
 	sem_t				*forks;
 	sem_t				*print_sem;
-	sem_t				*sem_start;
 	sem_t				*sem_death;
+	sem_t				*servant;
 }						t_pdata;
 
 typedef struct s_philo
