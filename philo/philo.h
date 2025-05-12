@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:21:03 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 13:35:02 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 18:05:24 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_pdata
 	long				time_to_die;
 	long				time_to_eat;
 	long				time_to_sleep;
+	int					*counted;
 	pthread_mutex_t		death_mutex;
 	pthread_mutex_t		print_mutex;
 	pthread_mutex_t		is_full_mutex;
@@ -42,6 +43,7 @@ typedef struct s_philo
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		meal_mutex;
 	int					is_full;
+	int					is_eating;
 	pthread_t			thread;
 	long				number_of_times_eaten;
 	t_pdata				*pdata;
@@ -67,7 +69,7 @@ int						init_data(t_philo **philos, t_pdata **pdata, int c,
 							char **v);
 int						init_philos_data(t_pdata *pdata, t_philo *philos);
 void					*philo(void *param);
-int						ft_destroy(t_pdata *pdata, char *err_msg);
+int						ft_destroy(t_philo *philos,t_pdata *pdata, char *err_msg);
 long					get_time(void);
 int						check_death(t_pdata *data);
 void					print_message(t_philo *philos, char *message);

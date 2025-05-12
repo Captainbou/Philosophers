@@ -6,13 +6,13 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:46:50 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 15:58:55 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 18:16:26 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_destroy(t_pdata *pdata, char *err_msg)
+int	ft_destroy(t_philo *philos, t_pdata *pdata, char *err_msg)
 {
 	int	i;
 
@@ -29,7 +29,10 @@ int	ft_destroy(t_pdata *pdata, char *err_msg)
 	pthread_mutex_destroy(&pdata->death_mutex);
 	pthread_mutex_destroy(&pdata->start);
 	pthread_mutex_destroy(&pdata->is_full_mutex);
-	ft_malloc(0, GB_CLEAR);
+	free(philos->pdata->forks);
+	free(philos->pdata->counted);
+	free(philos->pdata);
+	free(philos);
 	return (1);
 }
 

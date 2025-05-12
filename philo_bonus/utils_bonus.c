@@ -6,13 +6,13 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 23:43:19 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/05 15:15:57 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:12:54 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_destroy(t_pdata *pdata, char *err_msg)
+int	ft_destroy(t_pdata *pdata, t_philo *philos, char *err_msg)
 {
 	int	i;
 
@@ -23,7 +23,13 @@ int	ft_destroy(t_pdata *pdata, char *err_msg)
 	sem_close(pdata->forks);
 	sem_close(pdata->sem_death);
 	sem_close(pdata->servant);
-	ft_malloc(0, GB_CLEAR);
+	while (i < pdata->noph)
+	{
+		free(philos[i].sem_name);
+		sem_close(philos[i++].last_meal);
+	}
+	free(philos->pdata);
+	free(philos);
 	return (1);
 }
 

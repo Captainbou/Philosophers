@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:43:46 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 19:14:08 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:08:20 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int	eating(t_philo *philos, t_pdata *pdata)
 		return (pthread_mutex_unlock((philos->right_fork)),
 			pthread_mutex_unlock((philos->left_fork)), 1);
 	pthread_mutex_lock(&philos->meal_mutex);
+	philos->is_eating = 1;
 	philos->last_meal_time = get_time();
 	philos->number_of_times_eaten++;
 	if (philos->number_of_times_eaten == philos->pdata->number_of_times_to_eat)
@@ -50,6 +51,9 @@ int	eating(t_philo *philos, t_pdata *pdata)
 			pthread_mutex_unlock((philos->left_fork)), 1);
 	pthread_mutex_unlock((philos->right_fork));
 	pthread_mutex_unlock((philos->left_fork));
+	pthread_mutex_lock(&philos->meal_mutex);
+	philos->is_eating = 0;
+	pthread_mutex_unlock(&philos->meal_mutex);
 	return (0);
 }
 

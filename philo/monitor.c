@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:45:20 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/02 14:01:05 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 18:05:58 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	check_end_of_service(int i, int j, t_philo *philos)
 		pthread_mutex_unlock(&philos[i].pdata->is_full_mutex);
 		return (1);
 	}
-	if (get_time() - philos[i].last_meal_time >= philos->pdata->time_to_die)
+	if (!philos[i].is_eating && get_time() - philos[i].last_meal_time >= philos->pdata->time_to_die)
 	{
 		print_message(&philos[i], "died");
 		pthread_mutex_lock(&philos[i].pdata->death_mutex);
@@ -47,7 +47,7 @@ int	*init_counted(int *j, int size)
 	int	*counted;
 
 	*j = 0;
-	counted = ft_malloc(sizeof(int) * size, GB);
+	counted = malloc(sizeof(int) * size);
 	if (!counted)
 		return (NULL);
 	memset(counted, 0, sizeof(int) * size);
@@ -58,18 +58,17 @@ int	monitor(t_philo *philos)
 {
 	int	i;
 	int	j;
-	int	*counted;
 
-	counted = init_counted(&j, philos->pdata->noph);
-	if (!counted)
-		return (ft_destroy(philos->pdata, "Error: Memory allocation failed\n"));
+	philos->pdata->counted = init_counted(&j, philos->pdata->noph);
+	if (!philos->pdata->counted)
+		return (ft_destroy(philos, philos->pdata, "Error: Memory allocation failed\n"));
 	while (1)
 	{
 		i = 0;
 		while (i < philos->pdata->noph)
 		{
 			pthread_mutex_lock(&philos[i].meal_mutex);
-			if (philos[i].is_full == 1 && !is_counted(i, counted))
+			if (philos[i].is_full == 1 && !is_counted(i, philos->pdata->counted))
 				j++;
 			if (check_end_of_service(i, j, philos))
 				return (pthread_mutex_unlock(&philos[i].meal_mutex), 0);

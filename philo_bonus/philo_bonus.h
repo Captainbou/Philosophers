@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:21:03 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/05 14:57:41 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:19:12 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,12 @@ typedef struct s_philo
 {
 	int					id;
 	int					pid;
-	atomic_long			last_meal_time;
+	long				last_meal_time;
 	int					is_full;
+	int					is_eating;
 	pthread_t			thread;
+	sem_t				*last_meal;
+	char				*sem_name;
 	long				number_of_times_eaten;
 	t_pdata				*pdata;
 }						t_philo;
@@ -69,10 +72,13 @@ int						init_data(t_philo **philos, t_pdata **pdata, int c,
 							char **v);
 int						init_philos_data(t_pdata *pdata, t_philo *philos);
 void					*philo(t_philo *philos);
-int						ft_destroy(t_pdata *pdata, char *err_msg);
+int						ft_destroy(t_pdata *pdata, t_philo *philos,
+							char *err_msg);
 long					get_time(void);
 void					print_message(t_philo *philos, char *message);
 void					*monitor(void *param);
 int						philo_birth(t_pdata *pdata, t_philo *philos);
 void					kill_orphans(t_philo *philos, int i);
+char					*ft_strjoin(char const *s1, char *s2);
+char					*ft_itoa(int n);
 #endif

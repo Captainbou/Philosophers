@@ -6,7 +6,7 @@
 /*   By: zbouchra <zbouchra@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 17:45:20 by zbouchra          #+#    #+#             */
-/*   Updated: 2025/05/05 14:46:52 by zbouchra         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:19:29 by zbouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 
 int	check_end_of_service(t_philo *philos)
 {
-	if (get_time() - philos->last_meal_time >= philos->pdata->time_to_die)
+	if (!philos->is_eating && get_time() - philos->last_meal_time >= philos->pdata->time_to_die)
 	{
 		print_message(philos, "died");
+		sem_post(philos->last_meal);
 		return (1);
 	}
+	sem_post(philos->last_meal);
 	return (0);
 }
 
@@ -29,8 +31,9 @@ void	*monitor(void *param)
 	philos = (t_philo *)param;
 	while (1)
 	{
+		sem_wait(philos->last_meal);
 		if (philos->is_full == 1)
-			return (NULL);
+			return (sem_post(philos->last_meal), NULL);
 		if (check_end_of_service(philos))
 			return (NULL);
 		usleep(500);
